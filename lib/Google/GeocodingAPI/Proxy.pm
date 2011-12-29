@@ -37,6 +37,12 @@ get '/' => sub {
         my $curl = new LWP::Curl;
         my $json = $curl->get( $uri->as_string );
         my $gmap = JSON::Syck::Load( $json );
+
+        my $status = $gmap->{'status'};
+        my $lat = $gmap->{'results'}[0]{'geometry'}{'location'}{'lat'};
+        my $lng = $gmap->{'results'}[0]{'geometry'}{'location'}{'lng'};
+        printf STDERR "status: %s; lat/lng: %s\n", $status, $lat, $lng;
+
         my $yaml = { address => $address, gmap => $gmap, created_at => time };
         store $yaml, $file;
     }
