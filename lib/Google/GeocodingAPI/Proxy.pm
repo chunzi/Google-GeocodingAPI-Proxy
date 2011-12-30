@@ -19,6 +19,7 @@ our $root = dir('data-files');
 
 get '/' => sub {
     my $address = param 'address';
+    my $force = param 'force';
 
     my $addr = $address;
     Encode::_utf8_off( $addr );
@@ -28,7 +29,7 @@ get '/' => sub {
     -d $dir || $dir->mkpath( 0, 0777 );
 
     my $file = $dir->file( $sha )->stringify;
-    unless ( -f $file ){
+    if ( $force == 1 || ! -f $file ){
         # http://code.google.com/intl/zh-CN/apis/maps/documentation/geocoding/index.html#StatusCodes
         my $uri = URI->new("http://maps.google.com/maps/api/geocode/json");
         $uri->query_form( 'address' => $address, 'sensor' => 'false' );
